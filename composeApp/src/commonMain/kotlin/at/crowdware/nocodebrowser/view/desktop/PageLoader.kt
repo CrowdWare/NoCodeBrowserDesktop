@@ -81,6 +81,7 @@ fun LoadPage(
         }
     } else {
         if (page != null) {
+            println("page loaded")
             val padding = page!!.padding
             val bgColor = page!!.backgroundColor
             //navhostBackground.value = hexToColor(bgColor, MaterialTheme.colorScheme.background)
