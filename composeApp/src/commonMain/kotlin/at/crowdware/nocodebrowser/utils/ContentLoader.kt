@@ -20,11 +20,11 @@
 
 package at.crowdware.nocodebrowser.utils
 
-import androidx.annotation.RequiresApi
 import at.crowdware.nocodebrowser.viewmodel.GlobalProjectState
 import at.crowdware.nocodebrowser.viewmodel.ProjectState
-import at.crowdware.nocodebrowser.viewmodel.createProjectState
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -48,6 +48,7 @@ class ContentLoader {
         projectState = GlobalProjectState.projectState!!
         cacheDir = File(System.getProperty("user.home"), ".noCodeBrowser")
 
+        println("cacheDit: $cacheDir")
         if (!cacheDir.exists()) {
             cacheDir.mkdirs()
         }
@@ -135,12 +136,17 @@ class ContentLoader {
         println("url: $url")
         if (app == null)
             return null
+        for (fil in app!!.deployment.files) {
+            println("file: ${fil.path}")
+        }
         val result = app!!.deployment.files.find { it.path == "$name.sml"}
         if (result == null) {
+            println("page not in ds")
             return null
         }
         val fileName = ("ContentCache/" + appUrl.substringAfter("://") + "/pages$lang/$name").replace(".", "_").replace(":", "_") + ".sml"
         val file = File(cacheDir, fileName)
+        println("file: $cacheDir $fileName ${file.exists()}")
         fileContent = if (file.exists()) {
             val lastModifiedMillis = file.lastModified()
             val lastModifiedDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModifiedMillis), ZoneId.systemDefault())
@@ -229,6 +235,7 @@ class ContentLoader {
             app = result.first
             appLoaded = true
         }
+        projectState.app = app
         return@withContext app
     }
 

@@ -197,6 +197,7 @@ val textAlignMap = mapOf(
 fun parseNestedElements(nestedElements: List<Any>, elements: MutableList<UIElement>) {
     val currentProject = GlobalProjectState.projectState
     val theme = currentProject?.app?.theme
+    println("nest: $theme, ${currentProject?.app}")
 
     nestedElements.forEach { element ->
         when (element) {
@@ -244,6 +245,7 @@ fun parseNestedElements(nestedElements: List<Any>, elements: MutableList<UIEleme
                         elements.add(row)
                     }
                     "Markdown" -> {
+                        println("markdown: $theme")
                         if (theme != null) {
                             val md = ((properties["text"] as? PropertyValue.StringValue)?.value ?: "").split("\n")
                                 .joinToString("\n") { it.trim() }

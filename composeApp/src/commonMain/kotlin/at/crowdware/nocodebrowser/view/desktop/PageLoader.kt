@@ -56,8 +56,13 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.skia.Bitmap
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.nio.ByteBuffer
-
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
+import org.jetbrains.skia.Image
 
 @Composable
 fun LoadPage(
@@ -67,7 +72,6 @@ fun LoadPage(
     var page: Page? by remember { mutableStateOf(Page(color="#FFFFFF", backgroundColor = "#000000", padding = Padding(0,0,0,0), scrollable = "false", elements = mutableListOf(), title = "Todo"))}
     var isLoading by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
-    //val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         page = withContext(Dispatchers.IO) {
@@ -353,6 +357,7 @@ fun renderMarkdown(element: UIElement.MarkdownElement, contentLoader: ContentLoa
     var cacheName by remember { mutableStateOf("") }
     var text = ""
 
+    println("markdown")
     if (element.part.isNotEmpty()) {
         LaunchedEffect(element.part) {
             cacheName = withContext(Dispatchers.IO) {
@@ -375,7 +380,9 @@ fun renderMarkdown(element: UIElement.MarkdownElement, contentLoader: ContentLoa
         }
     } else {
         text = element.text.trim()
+        println("text: $text")
         val parsedMarkdown = parseMarkdown(text)
+        println("text: $parsedMarkdown")
         Text(
             text = parsedMarkdown,
             style = TextStyle(
@@ -494,11 +501,12 @@ fun dynamicImageFromAssets(
             contentLoader.loadAsset(filename, "images")
         }
     }
+    println("cacheName: $cacheName")
     if (cacheName.isNotEmpty()) {
         val bitmap = loadImageFromCache( cacheName, contentLoader)
         if (bitmap != null) {
             Image(
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = bitmap,
                 contentDescription = null,
                 contentScale = when(scale) {
                     "crop" -> ContentScale.Crop
@@ -513,10 +521,10 @@ fun dynamicImageFromAssets(
                 modifier = modifier.fillMaxWidth()
             )
       } else {
-          Text(text = "Image [$filename] not found")
+          Text(color = MaterialTheme.colors.onSurface, text = "Image [$filename] not found")
         }
     } else {
-        Text(text = "Image [$filename] not loaded")
+        Text(color = MaterialTheme.colors.onSurface, text = "Image [$filename] not loaded")
     }
 }
 
@@ -633,12 +641,12 @@ fun dynamicYoutube(modifier: Modifier = Modifier, videoId: String, height: Int =
      */
 }
 
-fun loadImageFromCache( filename: String, contentLoader: ContentLoader): Bitmap? {
-    /*
+fun loadImageFromCache(filename: String, contentLoader: ContentLoader): ImageBitmap? {
     return try {
         val file = File(contentLoader.cacheDir, filename)
         if (file.exists()) {
-            BitmapFactory.decodeFile(file.absolutePath)
+            val skiaImage = Image.makeFromEncoded(file.readBytes())
+            skiaImage.asImageBitmap()  // Converts Skia Image to Compose ImageBitmap
         } else {
             null
         }
@@ -646,9 +654,6 @@ fun loadImageFromCache( filename: String, contentLoader: ContentLoader): Bitmap?
         e.printStackTrace()
         null
     }
-
-     */
-    return null
 }
 
 @Composable

@@ -123,7 +123,7 @@ fun main() = application {
         icon = painterResource("icons/WindowsIcon.ico")
     ) {
         var isMaximized by remember { mutableStateOf(window.extendedState == Frame.MAXIMIZED_BOTH) }
-        window.minimumSize = Dimension(770, 735)
+        window.minimumSize = Dimension(400, 200)
         CompositionLocalProvider(LocalProjectState provides projectState!!) {
             LaunchedEffect(appState.theme) {
                 // set new location
