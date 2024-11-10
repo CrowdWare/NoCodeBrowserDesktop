@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2024 CrowdWare
  *
- * This file is part of NoCodeDesigner.
+ * This file is part of NoCodeBrowser.
  *
  *  NoCodeDesigner is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  NoCodeDesigner is distributed in the hope that it will be useful,
+ *  NoCodeBrowser is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with NoCodeDesigner.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with NoCodeBrowser.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package at.crowdware.nocodebrowser
@@ -28,33 +28,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import at.crowdware.nocodebrowser.GlobalProjectState
-import at.crowdware.nocodebrowser.GlobalProjectState.projectState
-import at.crowdware.nocodebrowser.ProjectState
-import at.crowdware.nocodebrowser.viewmodel.GlobalAppState
-import at.crowdware.nocodebrowser.viewmodel.createAppState
 import at.crowdware.nocodebrowser.theme.AppTheme
 import at.crowdware.nocodebrowser.theme.ExtendedTheme
-import at.crowdware.nocodebrowser.ui.*
+import at.crowdware.nocodebrowser.ui.WindowCaptionArea
+import at.crowdware.nocodebrowser.ui.WindowControlButton
 import at.crowdware.nocodebrowser.view.desktop.desktop
 import at.crowdware.nocodebrowser.viewmodel.*
 import at.crowdware.nocodebrowser.viewmodel.State
-import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
-import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import com.darkrockstudios.libraries.mpfilepicker.MultipleFilePicker
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.awt.Desktop
@@ -73,12 +63,12 @@ fun main() = application {
     val version = Version.version
     val isWindows = System.getProperty("os.name").contains("Windows", ignoreCase = true)
     var isAskingToClose by remember { mutableStateOf(false) }
-    //val appState = createAppState()
-    //GlobalAppState.appState = appState
-    //val projectState = createProjectState()
+    val appState = createAppState()
+    GlobalAppState.appState = appState
+    val projectState = createProjectState()
     //GlobalProjectState.projectState = projectState
 
-    /*loadAppState()
+    loadAppState()
     val windowState = rememberWindowState(
         width = (appState.windowWidth).dp,
         height = (appState.windowHeight).dp
@@ -86,7 +76,6 @@ fun main() = application {
     if (appState.theme.isEmpty())
         appState.theme = if(androidx.compose.foundation.isSystemInDarkTheme()) "Dark" else "Light"
 
-*/
     // setup logging, all println are stored in a log file
     val isDevMode = System.getenv("DEV_MODE") == "true"
     if (!isDevMode)
@@ -120,13 +109,13 @@ fun main() = application {
         transparent = !isWindows,
         undecorated = !isWindows,
         resizable = true,
-        //state = windowState,
+        state = windowState,
         icon = painterResource("icons/WindowsIcon.ico")
     ) {
         var isMaximized by remember { mutableStateOf(window.extendedState == Frame.MAXIMIZED_BOTH) }
         window.minimumSize = Dimension(770, 735)
-        //CompositionLocalProvider(LocalProjectState provides projectState!!) {
-            /*LaunchedEffect(appState.theme) {
+        CompositionLocalProvider(LocalProjectState provides projectState!!) {
+            LaunchedEffect(appState.theme) {
                 // set new location
                 window.setLocation(appState.windowX ?: 100, appState.windowY ?: 100)
 
@@ -135,8 +124,7 @@ fun main() = application {
                     isMaximized = (window.extendedState == Frame.MAXIMIZED_BOTH)
                 }
             }
-*/
-            AppTheme(darkTheme = true/*appState.theme == "Dark"*/) {
+            AppTheme(darkTheme = appState.theme == "Dark") {
                 var shape = RectangleShape
                 var borderShape = RectangleShape
 
@@ -209,7 +197,7 @@ fun main() = application {
                         }*/
                     }
                 }
-            //}
+            }
         }
     }
 }
