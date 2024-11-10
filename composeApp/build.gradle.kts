@@ -56,6 +56,12 @@ kotlin {
                 implementation("com.darkrockstudios:mpfilepicker:3.1.0")
                 implementation("net.pwall.mustache:kotlin-mustache:0.12")
                 implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
+
+                // rest client
+                implementation("com.squareup.okhttp3:okhttp:4.9.3")
+                // material
+                implementation("com.google.android.material:material:1.10.0")
+
                 kotlin.srcDir(layout.buildDirectory.dir("generated/version"))
             }
         }

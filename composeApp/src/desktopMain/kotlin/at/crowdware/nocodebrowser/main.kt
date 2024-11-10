@@ -42,7 +42,11 @@ import at.crowdware.nocodebrowser.theme.AppTheme
 import at.crowdware.nocodebrowser.theme.ExtendedTheme
 import at.crowdware.nocodebrowser.ui.WindowCaptionArea
 import at.crowdware.nocodebrowser.ui.WindowControlButton
-import at.crowdware.nocodebrowser.view.desktop.desktop
+import at.crowdware.nocodebrowser.ui.aboutDialog
+import at.crowdware.nocodebrowser.utils.App
+import at.crowdware.nocodebrowser.utils.ContentLoader
+import at.crowdware.nocodebrowser.utils.LocaleManager
+import at.crowdware.nocodebrowser.view.LoadPage
 import at.crowdware.nocodebrowser.viewmodel.*
 import at.crowdware.nocodebrowser.viewmodel.State
 import kotlinx.serialization.encodeToString
@@ -64,10 +68,16 @@ fun main() = application {
     val isWindows = System.getProperty("os.name").contains("Windows", ignoreCase = true)
     var isAskingToClose by remember { mutableStateOf(false) }
     val appState = createAppState()
+    val contentLoader = ContentLoader()
+    var app: App? by mutableStateOf(null)
+    var loading by mutableStateOf(false)
+
+
     GlobalAppState.appState = appState
     val projectState = createProjectState()
-    //GlobalProjectState.projectState = projectState
-
+    GlobalProjectState.projectState = projectState
+    LocaleManager.init()
+    contentLoader.init()
     loadAppState()
     val windowState = rememberWindowState(
         width = (appState.windowWidth).dp,
@@ -186,15 +196,25 @@ fun main() = application {
                                 }
                             }
                         }
-                        desktop()
-                        /*
-                        if (projectState.isAboutDialogOpen) {
-                            aboutDialog(
-                                appName = appName,
-                                version = version,
-                                onDismissRequest = { projectState.isAboutDialogOpen = false }
-                            )
-                        }*/
+
+                        LaunchedEffect(Unit) {
+                            if (!loading) {
+                                loading = true
+                                app = contentLoader.loadApp(ProjectState.url)
+                            }
+                        }
+                        if (app != null) {
+                            LoadPage("home", contentLoader)
+                            if (projectState.isAboutDialogOpen) {
+                                aboutDialog(
+                                    appName = appName,
+                                    version = version,
+                                    onDismissRequest = { projectState.isAboutDialogOpen = false }
+                                )
+                            }
+                        } else {
+                            Text(text="App not loaded...")
+                        }
                     }
                 }
             }

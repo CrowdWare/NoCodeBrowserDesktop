@@ -31,7 +31,16 @@ expect fun createProjectState(): ProjectState
 abstract class ProjectState {
 
     var isAboutDialogOpen by  mutableStateOf(false)
+
     var app: App? by mutableStateOf(null)
+
+    companion object {
+        const val url = "https://crowdware.github.io/NoCodeBrowserDesktop/app.sml"
+    }
+
+    fun setNewApp(ap: App) {
+        app = ap
+    }
 }
 
 object GlobalProjectState {
