@@ -44,6 +44,7 @@ abstract class ProjectState {
     }
 
     fun navigate(page: String) {
+        println("nav: $page")
         pageName = page
     }
 }
