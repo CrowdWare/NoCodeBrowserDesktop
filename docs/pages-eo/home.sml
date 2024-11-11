@@ -36,6 +36,6 @@ Page {
 				proksimiĝi al viaj revoj."}
 
 		Spacer { weight: 1 }
-		Button { label: "Pri NoCode" link: "page:app.about"}
+		Button { label: "Pri NoCode" link: "page:about"}
 	}
 }
