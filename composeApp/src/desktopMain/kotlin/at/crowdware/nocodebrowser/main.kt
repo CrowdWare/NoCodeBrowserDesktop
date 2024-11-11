@@ -72,7 +72,6 @@ fun main() = application {
     var app: App? by mutableStateOf(null)
     var loading by mutableStateOf(false)
 
-
     GlobalAppState.appState = appState
     val projectState = createProjectState()
     GlobalProjectState.projectState = projectState
@@ -204,7 +203,7 @@ fun main() = application {
                             }
                         }
                         if (app != null) {
-                            LoadPage("home", contentLoader)
+                            LoadPage(projectState.pageName, contentLoader)
                             if (projectState.isAboutDialogOpen) {
                                 aboutDialog(
                                     appName = appName,

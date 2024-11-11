@@ -53,15 +53,12 @@ import at.crowdware.nocodebrowser.utils.Page
 import at.crowdware.nocodebrowser.utils.UIElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.skia.Bitmap
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.ByteBuffer
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
+import at.crowdware.nocodebrowser.viewmodel.GlobalProjectState
 import org.jetbrains.skia.Image
 
 @Composable
@@ -467,18 +464,15 @@ fun RenderElement(
 fun handleButtonClick(
     link: String
 ) {
+    val projectState = GlobalProjectState.projectState
     when {
         link.startsWith("page:") -> {
             val pageId = link.removePrefix("page:")
-            //navController.navigate(pageId)
+            projectState?.navigate(pageId)
         }
         link.startsWith("web:") -> {
             val url = link.removePrefix("web:")
-            //mainActivity.openWebPage(url)
-        }
-        link.startsWith("animation:") -> {
-            val aniType = link.removePrefix("animation:")
-            //mainActivity.sendToAnimation(aniType)
+            projectState?.navigate(url)
         }
         else -> {
             println("Unknown link type: $link")

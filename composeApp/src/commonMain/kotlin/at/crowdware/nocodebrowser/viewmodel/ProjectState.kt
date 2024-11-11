@@ -33,6 +33,7 @@ abstract class ProjectState {
     var isAboutDialogOpen by  mutableStateOf(false)
 
     var app: App? by mutableStateOf(null)
+    var pageName by mutableStateOf("home")
 
     companion object {
         const val url = "https://crowdware.github.io/NoCodeBrowserDesktop/app.sml"
@@ -40,6 +41,10 @@ abstract class ProjectState {
 
     fun setNewApp(ap: App) {
         app = ap
+    }
+
+    fun navigate(page: String) {
+        pageName = page
     }
 }
 
